@@ -76,6 +76,10 @@ def message(text: str, status: Status):
 
 def load_text_file(file_path: str) -> list[str] | None:
     """テキストファイルを読み込んで、その文字列を行ごとのリストにして返す。"""
+
+    # ダブルクオートで囲まれている場合は削除
+    file_path = file_path.strip('"')
+
     # パスの存在を確認
     if not os.path.isfile(file_path):
         message('There is no file.', Status.FAILURE)
@@ -103,12 +107,12 @@ def text_preprocessor(lines: list[str]) -> list[str]:
 
 def add_attribute_to_line(lines: list[str]) -> list[list[str, LineAttribute]]:
     """行単位で判断できる脚本内属性を各文字列に付与した多次元リストを返す。"""
-    # 柱        ：行の先頭に○□記号が存在
-    hashira = re.compile(r'^[○□].+')
+    # 柱        ：行の先頭に⃞■□⃝○●◯⬤⌾◎⦾★☆記号が存在
+    hashira = re.compile(r'^[⃞■□⃝○●◯⬤⌾◎⦾★☆].+')
     # セリフ    ：行が「」記号で囲まれた文で終了
     serifu = re.compile(r'^.*「.+」$')
-    # 分離帯    ：「×　　　　　×　　　　　×」
-    bunritai = re.compile(r'^×\s+×\s+×$')
+    # 分離帯    ：「×　　　　　×　　　　　×」×＊
+    bunritai = re.compile(r'^[×＊]\s+[×＊]\s+[×＊]$')
     # 見出し    ：行が【】記号で囲まれている
     midashi = re.compile(r'^【.+】$')
     # 改行：空文字列（現状）
@@ -207,6 +211,19 @@ def format_to_docx(line_with_attributes: list[list[str, LineAttribute]]) -> Docu
     return doc
 
 
+def make_docx_path(file_path: str) -> str:
+
+    # ダブルクオートで囲まれている場合は削除
+    file_path = file_path.strip('"')
+
+    # ターゲットパスを作る
+    dirname = os.path.dirname(file_path)
+    basename_without_ext = os.path.splitext(os.path.basename(file_path))[0]
+    target_path = os.path.join(dirname, basename_without_ext + '.docx')
+
+    return target_path
+
+
 """
 def save_plain_text_file(text: str, path: str):
     f = open(path, encoding='utf_8', mode='w')
@@ -237,10 +254,8 @@ def ktf():
     message('Generating .docx file. Please wait...', Status.PROSESSING)
 
     doc = format_to_docx(line_with_attributes)
+    target_path = make_docx_path(file_path)
 
-    dirname = os.path.dirname(file_path)
-    basename_without_ext = os.path.splitext(os.path.basename(file_path))[0]
-    target_path = os.path.join(dirname, basename_without_ext + '.docx')
     doc.save(target_path)
 
     message('.docx file Generated at:\n' + target_path, Status.SUCCESS)
@@ -252,7 +267,7 @@ def eyecatch():
           '🍖 the Barbarian Tools™\n'\
           'Kyakuhon Text Formatter\n'\
           '-----------------------\n'\
-          'Beta             v0.1.0\n'\
+          'Beta             v0.2.0\n'\
           '-----------------------'
     println_col(str, Decoration.RED)
 
