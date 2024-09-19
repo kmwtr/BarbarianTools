@@ -2,9 +2,14 @@
 
 An ad-hoc tools of barbaric design.
 
-## KTF | Kyakuhon Text Formatter
+「とりあえず動けばいい」がコンセプトです。🤯
 
-### dependencies
+
+### KTF | Kyakuhon Text Formatter
+
+.txtをD&Dすると、脚本書式風にインデントした.docxを出力します。
+
+#### dependencies
 
 ```bash
 pip install python-docx
