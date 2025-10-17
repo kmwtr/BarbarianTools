@@ -4,49 +4,48 @@
 # Kyakuhon Text Formatter
 # ------------------------------------------------------------------------------
 
-import enum
 import os
 import re
+from enum import Enum
 from docx import Document
 from docx.shared import Inches
 from docx.shared import Pt
 from docx.shared import RGBColor
 
-
 # ------------------------------------------------------------------------------
 
-class Decoration(enum.Enum):
+class Decoration(Enum):
     # Decoration
-    RESET = '\033[0m'
-    BOLD = '\033[1m'
+    RESET =     '\033[0m'
+    BOLD =      '\033[1m'
     UNDERLINE = '\033[4m'
-    REVERSE = '\033[7m'
+    REVERSE =   '\033[7m'
     # Text Color
-    RED = '\033[31m'
-    GREEN = '\033[32m'
-    BLUE = '\033[34m'
-    CYAN = '\033[36m'
-    MAGENTA = '\033[35m'
-    YELLOW = '\033[33m'
-    BLACK = '\033[30m'
-    WHITE = '\033[37m'
+    RED =       '\033[31m'
+    GREEN =     '\033[32m'
+    BLUE =      '\033[34m'
+    CYAN =      '\033[36m'
+    MAGENTA =   '\033[35m'
+    YELLOW =    '\033[33m'
+    BLACK =     '\033[30m'
+    WHITE =     '\033[37m'
 
 
-class Status(enum.Enum):
-    MESSAGE = '🤖 '
-    FAILURE = Decoration.RED.value + '❌ [failure] ' + Decoration.RESET.value
-    SUCCESS = Decoration.GREEN.value + '✅ [success] ' + Decoration.RESET.value
-    CAUTION = Decoration.YELLOW.value + '⚠️ [caution] ' + Decoration.RESET.value
-    PROSESSING = Decoration.CYAN.value + '⌛ [prosessing] ' + Decoration.RESET.value
+class Status(Enum):
+    MESSAGE =   '🤖 '
+    FAILURE =   Decoration.RED.value +      '❌ [ Failure ] ' + Decoration.RESET.value
+    SUCCESS =   Decoration.GREEN.value +    '✅ [ Success ] ' + Decoration.RESET.value
+    CAUTION =   Decoration.YELLOW.value +   '⚠️ [ Caution ] ' + Decoration.RESET.value
+    PROSESSING = Decoration.CYAN.value +    '⌛ [Prosessing] ' + Decoration.RESET.value
 
 
-class LineAttribute(enum.Enum):
-    HASHIRA = Decoration.YELLOW.value    # Slugline
-    TOGAKI = Decoration.BLUE.value       # Action
-    SERIFU = Decoration.GREEN.value      # Dialogue
-    BUNRITAI = Decoration.RED.value      # Transition
-    MIDASHI = Decoration.CYAN.value
-    KAIGYO = ''
+class LineAttribute(Enum):
+    HASHIRA =   Decoration.YELLOW.value # Slugline
+    TOGAKI =    Decoration.BLUE.value   # Action
+    SERIFU =    Decoration.GREEN.value  # Dialogue
+    BUNRITAI =  Decoration.RED.value    # Transition
+    MIDASHI =   Decoration.CYAN.value
+    KAIGYO =    ''
 
 
 def println_col(text: str, col: Decoration):
@@ -76,7 +75,6 @@ def message(text: str, status: Status):
 
 def load_text_file(file_path: str) -> list[str] | None:
     """テキストファイルを読み込んで、その文字列を行ごとのリストにして返す。"""
-
     # ダブルクオートで囲まれている場合は削除
     file_path = file_path.strip('"')
 
@@ -107,8 +105,8 @@ def text_preprocessor(lines: list[str]) -> list[str]:
 
 def add_attribute_to_line(lines: list[str]) -> list[list[str, LineAttribute]]:
     """行単位で判断できる脚本内属性を各文字列に付与した多次元リストを返す。"""
-    # 柱        ：行の先頭に⃞■□⃝○●◯⬤⌾◎⦾★☆記号が存在
-    hashira = re.compile(r'^[⃞■□⃝○●◯⬤⌾◎⦾★☆].+')
+    # 柱        ：行の先頭に⃞■□⃝○●〇◯⬤⌾◎⦾★☆記号が存在
+    hashira = re.compile(r'^[■□⃝○●〇◯⬤⌾◎⦾★☆].+')
     # セリフ    ：行が「」記号で囲まれた文で終了
     serifu = re.compile(r'^.*「.+」$')
     # 分離帯    ：「×　　　　　×　　　　　×」×＊
@@ -142,7 +140,6 @@ def fix_line_breaks(line_with_attributes: list[list[str, LineAttribute]]) -> lis
     """コンテキストを基に改行が適切かチェックし修正して返す。"""
     # ・柱の前後は常に空白
     # ・違う属性との切り替わりに空白
-
     buffer = []
     context = line_with_attributes[0][1]  # 先頭の改行防止策としてとりあえず
     for lwa in line_with_attributes:
@@ -212,7 +209,6 @@ def format_to_docx(line_with_attributes: list[list[str, LineAttribute]]) -> Docu
 
 
 def make_docx_path(file_path: str) -> str:
-
     # ダブルクオートで囲まれている場合は削除
     file_path = file_path.strip('"')
 
@@ -222,7 +218,6 @@ def make_docx_path(file_path: str) -> str:
     target_path = os.path.join(dirname, basename_without_ext + '.docx')
 
     return target_path
-
 
 """
 def save_plain_text_file(text: str, path: str):
@@ -267,7 +262,7 @@ def eyecatch():
           '🍖 the Barbarian Tools™\n'\
           'Kyakuhon Text Formatter\n'\
           '-----------------------\n'\
-          'Beta             v0.2.0\n'\
+          'Beta             v0.2.1\n'\
           '-----------------------'
     println_col(str, Decoration.RED)
 
