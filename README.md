@@ -1,4 +1,4 @@
-# the BarbarianTools™
+# 🍖 the BarbarianTools™
 
 An ad-hoc tools of barbaric design.
 
@@ -7,10 +7,21 @@ An ad-hoc tools of barbaric design.
 
 ## KTF | Kyakuhon Text Formatter
 
-.txtをD&Dすると、脚本書式風にインデントした.docxを出力します。
+.txtを指定すると、脚本書式風にインデントした.docxを出力します。
 
 ### dependencies
 
 ```bash
 pip install python-docx
+```
+
+
+## SID | Similar Image Detector
+
+指定ディレクトリ内の画像の類似度を計算してhtmlファイルにまとめます。
+
+### dependencies
+
+```bash
+pip install imgsim torchvision
 ```
